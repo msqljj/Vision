@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="us.xingkong.vision.activitys.ImagePlaygroundActivity"
+    tools:context="com.hentaiuncle.vision.activitys.ImagePlaygroundActivity"
     tools:showIn="@layout/activity_image_playground">
 
     <android.support.design.widget.TabLayout
@@ -31,7 +31,7 @@
     </android.support.design.widget.TabLayout>
 
 
-    <us.xingkong.vision.other.NoScrollViewPager
+    <com.hentaiuncle.vision.other.NoScrollViewPager
         android:id="@+id/img_pg_vp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -39,6 +39,6 @@
         >
 
 
-    </us.xingkong.vision.other.NoScrollViewPager>
+    </com.hentaiuncle.vision.other.NoScrollViewPager>
 </LinearLayout>
 

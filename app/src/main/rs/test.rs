@@ -1,5 +1,5 @@
 #pragma version(1)
-#pragma rs java_package_name(us.xingkong.vision)
+#pragma rs java_package_name(com.hentaiuncle.vision)
 
 int width,height;
 int r;

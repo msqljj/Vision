@@ -1,5 +1,5 @@
 #pragma version(1)
-#pragma rs java_package_name(us.xingkong.vision)
+#pragma rs java_package_name(com.hentaiuncle.vision)
 
 rs_allocation gIn;// 输入图像的 allocation 对象
 rs_allocation gOut;// 输出图像的 allocation 对象

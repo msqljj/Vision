@@ -1,5 +1,5 @@
 #pragma version(1)
-#pragma rs java_package_name(us.xingkong.vision)
+#pragma rs java_package_name(com.hentaiuncle.vision)
 
 void root(const uchar4 *v_in, uchar4 *v_out) {
     float4 f4 = rsUnpackColor8888(*(v_in));
