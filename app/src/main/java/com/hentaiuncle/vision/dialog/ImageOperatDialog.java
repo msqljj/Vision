@@ -57,7 +57,7 @@ public class ImageOperatDialog extends AppCompatDialog {
 
     private List<String> argsName;
     private List<Class> argsClass;
-    private Dialog prossessDialog;
+    private ProgressDialog prossessDialog;
 
     private TextView title;
     private ImageView imageView;
@@ -139,7 +139,7 @@ public class ImageOperatDialog extends AppCompatDialog {
             remove.setVisibility(View.INVISIBLE);
         prossessDialog = new ProgressDialog(this.getContext());
         prossessDialog.setTitle(R.string.doing);
-
+        prossessDialog.setMessage(this.getContext().getResources().getString(R.string.wait));
         handler = new Handler();
 
         //给控件赋值

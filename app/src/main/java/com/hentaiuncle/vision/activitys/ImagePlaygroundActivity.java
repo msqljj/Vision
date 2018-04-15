@@ -1,12 +1,16 @@
 package com.hentaiuncle.vision.activitys;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -26,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -43,6 +48,7 @@ import com.hentaiuncle.vision.dialog.ImageOperatSelector;
 import com.hentaiuncle.vision.model.operator.Blur;
 import com.hentaiuncle.vision.model.operator.ImageOperator;
 import com.hentaiuncle.vision.other.NoScrollViewPager;
+
 import vision.core.Core;
 import vision.image.VisionImage;
 
@@ -53,19 +59,22 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
 
     private ImageView imageView, imageView_input, imageView_output;
     private TextView info_input, info_output;
-    private FloatingActionButton fab_pick_img, fab_op_add;//, fab2;
+    private FloatingActionButton fab_pick_img, fab_op_add;
     private NoScrollViewPager vp;
     private Button bt_output_update, bt_output_save;
-
     private TabLayout tb;
 
     private RecyclerView opList;
     private List<ImageOperator> opdata;
 
+
     private List<View> viewList;
     private VisionImage img;
     private Bitmap img_bitmap;
 
+    private Thread doThread;
+    private ProgressDialog dialog,ndialog;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +86,25 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        ndialog = new ProgressDialog(ImagePlaygroundActivity.this);
+        ndialog.setTitle(R.string.cancling);
+        ndialog.setMessage(ImagePlaygroundActivity.this.getResources().getString(R.string.wait));
+        ndialog.setCancelable(true);
+
+        dialog = new ProgressDialog(this);
+        dialog.setTitle(R.string.doing);
+        dialog.setMessage(getResources().getString(R.string.wait));
+        dialog.setCancelable(true);
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                if (doThread != null) {
+                    ndialog.show();
+                    doThread.interrupt();
+                }
+            }
+        });
+        handler = new Handler();
 
         opdata = new ArrayList<>();
         viewList = new ArrayList<>();
@@ -183,24 +211,28 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
         bt_output_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    String result = exportOutput();
-                    if (result != null)
-                        Snackbar.make(view, "Success\n   " + result, Snackbar.LENGTH_SHORT).show();
-                    else
-                        Snackbar.make(view, "Fail", Snackbar.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-
-                }
+                exportOutput();
             }
         });
 
-        try {
-            updateImg(getIntent().getData());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        doThread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    updateImg(getIntent().getData());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        };
+        dialog.show();
+        doThread.start();
     }
 
     /**
@@ -251,25 +283,91 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
             tmp = img.Zoom(imageView_output.getWidth(), h);
         else
             tmp = img.Copy();
-        for (ImageOperator op : opdata) {
-            op.Operator(tmp, ImagePlaygroundActivity.this.getApplicationContext());
-            op = null;
-            System.gc();
-        }
-        Bitmap bitmap = Bitmap.createBitmap(tmp.getRGB(), tmp.getWidth(), tmp.getHeight(), Bitmap.Config.RGB_565);
-        imageView_output.setImageBitmap(bitmap);
-        info_output.setText("Width:\t" + bitmap.getWidth() + "\nHeight:\t" + bitmap.getHeight());
+
+        doThread = new Thread() {
+            @Override
+            public void run() {
+
+                long start = System.currentTimeMillis();
+                for (int i = 0;i < opdata.size() && !this.isInterrupted();i++) {
+                    ImageOperator op = opdata.get(i);
+                    final int tttmp = i;
+                    final String opname = op.OperatorName();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            dialog.setMessage(ImagePlaygroundActivity.this.getResources().getString(R.string.doing_what) + opname + " (" + (tttmp + 1) + "/" + opdata.size() + ")");
+                        }
+                    });
+                    op.Operator(tmp, ImagePlaygroundActivity.this.getApplicationContext());
+                    op = null;
+                    System.gc();
+                }
+
+                long end = System.currentTimeMillis();
+
+                if(!this.isInterrupted()){
+                    Bitmap bitmap = Bitmap.createBitmap(tmp.getRGB(), tmp.getWidth(), tmp.getHeight(), Bitmap.Config.RGB_565);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            imageView_output.setImageBitmap(bitmap);
+                            info_output.setText("Width:\t" + bitmap.getWidth() + "\nHeight:\t" + bitmap.getHeight());
+                            dialog.dismiss();
+                            if(ndialog != null)
+                                ndialog.dismiss();
+                            Resources rs = ImagePlaygroundActivity.this.getResources();
+                            Toast.makeText(ImagePlaygroundActivity.this,rs.getString(R.string.done) + "\n" + rs.getString(R.string.spend_time) + ":" + (end - start) + "ms",Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }else{
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ndialog.dismiss();
+                            if(ndialog != null)
+                                ndialog.dismiss();
+                            Resources rs = ImagePlaygroundActivity.this.getResources();
+                            Toast.makeText(ImagePlaygroundActivity.this,rs.getString(R.string.cancled),Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }
+
+            }
+        };
+        dialog.setTitle(R.string.doing);
+        dialog.setMessage(getResources().getString(R.string.wait));
+        dialog.show();
+        doThread.start();
+
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 2) {
             if (data != null && data.getData() != null) {
-                try {
-                    updateImg(data.getData());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+                doThread = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            updateImg(data.getData());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                };
+                dialog.show();
+                doThread.start();
             }
         }
     }
@@ -332,44 +430,112 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected String exportOutput() throws Exception {
+    protected void exportOutput()  {
         int permission = ContextCompat.checkSelfPermission(this,
                 "android.permission.WRITE_EXTERNAL_STORAGE");
         if (permission != PackageManager.PERMISSION_GRANTED) {
             // 没有写的权限，去申请写的权限，会弹出对话框
             ActivityCompat.requestPermissions(this, PERMISSIONS, 1);
-            return null;
+            return;
         }
-        String path = Environment.getExternalStorageDirectory().getPath() + "/DCIM/Camera";
-        File root = new File(path);
-        root.mkdirs();
-
-        DateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-        String fileanme = "Vison - " + format.format(new Date()) + ".jpg";
-
-        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(path + "/" + fileanme));
-        DisplayMetrics d = this.getResources().getDisplayMetrics();
-
+        final DisplayMetrics d = ImagePlaygroundActivity.this.getResources().getDisplayMetrics();
         double scale = (double) d.widthPixels / img.getWidth();
         int h = (int) (scale * img.getHeight());
-        VisionImage tmp;
-        if (scale <= 1)
-            tmp = img.Zoom(d.widthPixels, h);
-        else
-            tmp = img.Copy();
-        for (ImageOperator op : opdata) {
-            op.Operator(tmp, ImagePlaygroundActivity.this.getApplicationContext());
-            op = null;
-            System.gc();
-        }
-        Bitmap bitmap = Bitmap.createBitmap(tmp.getRGB(), tmp.getWidth(), tmp.getHeight(), Bitmap.Config.RGB_565);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-        out.flush();
-        out.close();
-        bitmap = null;
-        tmp = null;
-        System.gc();
-        this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + path + "/" + fileanme)));
-        return fileanme;
+
+
+        doThread = new Thread(){
+            @Override
+            public void run() {
+                try{
+
+                    String path = Environment.getExternalStorageDirectory().getPath() + "/DCIM/Camera";
+                    File root = new File(path);
+                    root.mkdirs();
+
+                    DateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                    String fileanme = "Vison - " + format.format(new Date()) + ".jpg";
+                    BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(path + "/" + fileanme));
+
+                    VisionImage tmp;
+                    if (scale <= 1)
+                        tmp = img.Zoom(d.widthPixels, h);
+                    else
+                        tmp = img.Copy();
+
+                    long start = System.currentTimeMillis();
+                    for (int i = 0;i < opdata.size() && !this.isInterrupted();i++) {
+                        ImageOperator op = opdata.get(i);
+                        final int tttmp = i;
+                        final String opname = op.OperatorName();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.setMessage(ImagePlaygroundActivity.this.getResources().getString(R.string.doing_what) + opname + " (" + (tttmp + 1) + "/" + opdata.size() + ")");
+                            }
+                        });
+                        op.Operator(tmp, ImagePlaygroundActivity.this.getApplicationContext());
+                        op = null;
+                        System.gc();
+                    }
+
+                    long end = System.currentTimeMillis();
+                    if(this.isInterrupted()) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.dismiss();
+                                ndialog.dismiss();
+                                Resources rs = ImagePlaygroundActivity.this.getResources();
+                                Toast.makeText(ImagePlaygroundActivity.this,rs.getString(R.string.cancled),Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }else{
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.setMessage(ImagePlaygroundActivity.this.getResources().getString(R.string.export_pic));
+                            }
+                        });
+                        Bitmap bitmap = Bitmap.createBitmap(tmp.getRGB(), tmp.getWidth(), tmp.getHeight(), Bitmap.Config.RGB_565);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                        out.flush();
+                        out.close();
+                        bitmap = null;
+                        tmp = null;
+                        System.gc();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ImagePlaygroundActivity.this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + path + "/" + fileanme)));
+                                dialog.dismiss();
+                                if(ndialog != null)
+                                    ndialog.dismiss();
+                                Resources rs = ImagePlaygroundActivity.this.getResources();
+                                Toast.makeText(ImagePlaygroundActivity.this,rs.getString(R.string.done) + "\n" + rs.getString(R.string.spend_time) + ":" + (end - start) + "ms",Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+
+
+                }catch(Exception e){
+                    e.printStackTrace();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ImagePlaygroundActivity.this,e.toString(),Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            if(ndialog != null)
+                                ndialog.dismiss();
+                        }
+                    });
+                }
+            }
+        };
+        dialog.setTitle(R.string.doing);
+        dialog.setMessage(getResources().getString(R.string.wait));
+        dialog.show();
+        doThread.start();
+
     }
 }

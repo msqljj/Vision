@@ -5,16 +5,29 @@
     <string name="remove">删除</string>
     <string name="cancle">取消</string>
     <string name="update">预览效果</string>
+
     <string name="doing">处理中</string>
+    <string name="doing_what">正在进行:</string>
+    <string name="done">处理完成</string>
+    <string name="cancled">已取消处理</string>
+    <string name="cancling">正在取消处理</string>
+    <string name="export_pic">正在导出图片</string>
+    <string name="spend_time">耗时</string>
+
     <string name="wait">请稍等…</string>
+    <string name="input">输入</string>
     <string name="deal">处理</string>
+    <string name="output">输出</string>
     <string name="save">储存</string>
+    <string name="op_select">选择操作</string>
 
     <string name="operator_list">操作列表</string>
 
     <string name="tips_success">操作成功</string>
     <string name="tips_cancle">已取消操作</string>
     <string name="tips_exception">发生错误</string>
+
+
 
 
 

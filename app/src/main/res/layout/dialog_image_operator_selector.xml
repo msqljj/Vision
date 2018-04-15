@@ -11,7 +11,7 @@
         android:layout_height="0dp"
         android:layout_weight="0.15"
         android:gravity="center"
-        android:text="选择器"/>
+        android:text="@string/op_select"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/op_selector_list"

@@ -17,16 +17,16 @@
         <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="输入" />
+            android:text="@string/input" />
         <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="处理" />
+            android:text="@string/deal" />
         <android.support.design.widget.TabItem
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="输出" />
+            android:text="@string/output" />
 
     </android.support.design.widget.TabLayout>
 
