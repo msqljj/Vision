@@ -1,5 +1,13 @@
-# Vision
-安卓计算机视觉实验箱
+# Vision 安卓计算机视觉实验箱
+
+图像处理算法大部分使用RenderScript，利用GPU进行处理，效率极高。一些较难移植算法例如Low Poly使用java，效率较低。
+
+Activity预览时处理缩放后的图像，避免OOM。
+
+神经网络模块正在设计中。
+
+
+# Demo
 
 ![demo](https://github.com/Hansin1997/Vision/raw/master/pics/pic1.jpg)
 
