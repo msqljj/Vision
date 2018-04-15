@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#333333</color>
+    <color name="colorPrimaryDark">#272727</color>
+    <color name="colorAccent">#2c7fe4</color>
+
+    <color name="dark">#272727</color>
+    <color name="light">#ececec</color>
+    <color name="danger">#de280c</color>
+
+    <color name="ok">#2c7fe4</color>
+    <color name="cancle">#9a9898</color>
+    <color name="cool">#00000000</color>
+    <color name="none">#00000000</color>
+
+</resources>

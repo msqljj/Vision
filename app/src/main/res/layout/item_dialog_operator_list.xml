@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_height="40dp">
+
+    <TextView
+        android:id="@+id/operator_list_item_name"
+        android:padding="4dp"
+        android:layout_width="0dp"
+        android:layout_weight="0.25"
+        android:layout_height="match_parent"
+        android:textSize="@dimen/dialog_content"
+        android:textColor="@color/dark"
+        android:gravity="center"
+        android:text="arg"/>
+
+    <LinearLayout
+        android:id="@+id/operator_list_item_controler"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="4dp"
+        android:layout_weight="0.6"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/operator_list_item_value"
+        android:textColor="@color/colorPrimary"
+        android:text="value"
+        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.15"/>
+</LinearLayout>

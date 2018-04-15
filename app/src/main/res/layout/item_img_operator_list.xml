@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_height="40dp">
+
+    <Button
+        android:id="@+id/selector_item_name"
+        android:padding="4dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+
+        android:textSize="@dimen/dialog_content"
+        android:textColor="@color/dark"
+        android:gravity="left"
+        android:text="operator"/>
+
+
+</LinearLayout>

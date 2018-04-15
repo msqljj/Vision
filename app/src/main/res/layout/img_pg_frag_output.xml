@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_margin="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="输出图像"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <ImageView
+            android:padding="16dp"
+            android:id="@+id/imageView_output"
+            android:layout_margin="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@mipmap/ic_launcher"/>
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/info_output"
+            android:layout_margin="26dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Image Information"/>
+
+        <Button
+            android:layout_margin="16dp"
+            android:textColor="@color/light"
+            android:text="@string/deal"
+            android:background="@color/ok"
+            android:id="@+id/fab_output_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"/>
+
+        <Button
+            android:id="@+id/fab_output_save"
+            android:text="@string/save"
+            android:background="@color/light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/fab_output_update"
+            android:layout_alignTop="@id/fab_output_update"/>
+
+    </RelativeLayout>
+
+
+
+
+
+</LinearLayout>

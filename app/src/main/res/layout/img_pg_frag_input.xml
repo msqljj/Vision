@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_margin="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="输入图像"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <ImageView
+            android:padding="16dp"
+            android:id="@+id/imageView_input"
+            android:layout_margin="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@mipmap/ic_launcher"/>
+
+        <android.support.design.widget.FloatingActionButton
+
+            android:id="@+id/fab_pick_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imageView_input"
+            android:layout_alignRight="@+id/imageView_input"
+            android:layout_margin="@dimen/fab_margin"
+
+            app:srcCompat="@drawable/ic_action_update" />
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/info_input"
+        android:layout_margin="26dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Image Information"/>
+
+
+
+</LinearLayout>
