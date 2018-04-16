@@ -215,24 +215,11 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
             }
         });
 
-        doThread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    updateImg(getIntent().getData());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        };
-        dialog.show();
-        doThread.start();
+        try {
+            updateImg(getIntent().getData());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -349,25 +336,11 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 2) {
             if (data != null && data.getData() != null) {
-
-                doThread = new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            updateImg(data.getData());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                dialog.dismiss();
-                            }
-                        });
-                    }
-                };
-                dialog.show();
-                doThread.start();
+                try {
+                    updateImg(getIntent().getData());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
