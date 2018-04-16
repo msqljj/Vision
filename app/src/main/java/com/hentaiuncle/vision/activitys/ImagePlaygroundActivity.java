@@ -337,7 +337,7 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
         if (requestCode == 2) {
             if (data != null && data.getData() != null) {
                 try {
-                    updateImg(getIntent().getData());
+                    updateImg(data.getData());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
