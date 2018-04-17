@@ -24,10 +24,7 @@ public class Inverse extends ImageOperator {
     public void Operator(VisionImage img, Context context) {
         RenderScript script = RenderScript.create(context);
 
-        Bitmap bm = Bitmap.createBitmap(img.getWidth(),img.getHeight(),Bitmap.Config.RGB_565);
-        bm = bm.copy(Bitmap.Config.ARGB_8888,true);
-
-        bm.setPixels(img.getRGB(),0,img.getWidth(),0,0,img.getWidth(),img.getHeight());
+        Bitmap bm = Bitmap.createBitmap(img.getRGB(),img.getWidth(),img.getHeight(),Bitmap.Config.ARGB_8888);
 
         ScriptC_inverse st = new ScriptC_inverse(script);
         Allocation input = Allocation.createFromBitmap(script,bm);
@@ -35,7 +32,6 @@ public class Inverse extends ImageOperator {
         st.forEach_root(input,output);
         output.copyTo(bm);
 
-        bm = bm.copy(Bitmap.Config.RGB_565,false);
         bm.getPixels(img.getRGB(),0,img.getWidth(),0,0,img.getWidth(),img.getHeight());
         st.destroy();
     }

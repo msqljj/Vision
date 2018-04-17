@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.hentaiuncle.vision.Global;
 import com.hentaiuncle.vision.R;
 import com.hentaiuncle.vision.dialog.ImageOperatDialog;
 import com.hentaiuncle.vision.dialog.ImageOperatSelector;
@@ -73,8 +74,10 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
     private Bitmap img_bitmap;
 
     private Thread doThread;
-    private ProgressDialog dialog,ndialog;
+    private ProgressDialog dialog, ndialog;
     private Handler handler;
+
+    //private RealmTest dbData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,6 +223,7 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     /**
@@ -276,7 +280,7 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
             public void run() {
 
                 long start = System.currentTimeMillis();
-                for (int i = 0;i < opdata.size() && !this.isInterrupted();i++) {
+                for (int i = 0; i < opdata.size() && !this.isInterrupted(); i++) {
                     ImageOperator op = opdata.get(i);
                     final int tttmp = i;
                     final String opname = op.OperatorName();
@@ -293,7 +297,7 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
 
                 long end = System.currentTimeMillis();
 
-                if(!this.isInterrupted()){
+                if (!this.isInterrupted()) {
                     Bitmap bitmap = Bitmap.createBitmap(tmp.getRGB(), tmp.getWidth(), tmp.getHeight(), Bitmap.Config.RGB_565);
                     handler.post(new Runnable() {
                         @Override
@@ -301,22 +305,22 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
                             imageView_output.setImageBitmap(bitmap);
                             info_output.setText("Width:\t" + bitmap.getWidth() + "\nHeight:\t" + bitmap.getHeight());
                             dialog.dismiss();
-                            if(ndialog != null)
+                            if (ndialog != null)
                                 ndialog.dismiss();
                             Resources rs = ImagePlaygroundActivity.this.getResources();
-                            Toast.makeText(ImagePlaygroundActivity.this,rs.getString(R.string.done) + "\n" + rs.getString(R.string.spend_time) + ":" + (end - start) + "ms",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ImagePlaygroundActivity.this, rs.getString(R.string.done) + "\n" + rs.getString(R.string.spend_time) + ":" + (end - start) + "ms", Toast.LENGTH_SHORT).show();
 
                         }
                     });
-                }else{
+                } else {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             ndialog.dismiss();
-                            if(ndialog != null)
+                            if (ndialog != null)
                                 ndialog.dismiss();
                             Resources rs = ImagePlaygroundActivity.this.getResources();
-                            Toast.makeText(ImagePlaygroundActivity.this,rs.getString(R.string.cancled),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ImagePlaygroundActivity.this, rs.getString(R.string.cancled), Toast.LENGTH_SHORT).show();
 
                         }
                     });
@@ -372,6 +376,7 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
                                 opdata.remove(op);
                                 OpAdapter.this.notifyDataSetChanged();
                             }
+
                         }
                     });
                 }
@@ -403,7 +408,7 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected void exportOutput()  {
+    protected void exportOutput() {
         int permission = ContextCompat.checkSelfPermission(this,
                 "android.permission.WRITE_EXTERNAL_STORAGE");
         if (permission != PackageManager.PERMISSION_GRANTED) {
@@ -416,10 +421,10 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
         int h = (int) (scale * img.getHeight());
 
 
-        doThread = new Thread(){
+        doThread = new Thread() {
             @Override
             public void run() {
-                try{
+                try {
 
                     String path = Environment.getExternalStorageDirectory().getPath() + "/DCIM/Camera";
                     File root = new File(path);
@@ -436,7 +441,7 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
                         tmp = img.Copy();
 
                     long start = System.currentTimeMillis();
-                    for (int i = 0;i < opdata.size() && !this.isInterrupted();i++) {
+                    for (int i = 0; i < opdata.size() && !this.isInterrupted(); i++) {
                         ImageOperator op = opdata.get(i);
                         final int tttmp = i;
                         final String opname = op.OperatorName();
@@ -452,17 +457,17 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
                     }
 
                     long end = System.currentTimeMillis();
-                    if(this.isInterrupted()) {
+                    if (this.isInterrupted()) {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
                                 dialog.dismiss();
                                 ndialog.dismiss();
                                 Resources rs = ImagePlaygroundActivity.this.getResources();
-                                Toast.makeText(ImagePlaygroundActivity.this,rs.getString(R.string.cancled),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ImagePlaygroundActivity.this, rs.getString(R.string.cancled), Toast.LENGTH_SHORT).show();
                             }
                         });
-                    }else{
+                    } else {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -481,24 +486,23 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
                             public void run() {
                                 ImagePlaygroundActivity.this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + path + "/" + fileanme)));
                                 dialog.dismiss();
-                                if(ndialog != null)
+                                if (ndialog != null)
                                     ndialog.dismiss();
                                 Resources rs = ImagePlaygroundActivity.this.getResources();
-                                Toast.makeText(ImagePlaygroundActivity.this,rs.getString(R.string.done) + "\n" + rs.getString(R.string.spend_time) + ":" + (end - start) + "ms",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ImagePlaygroundActivity.this, rs.getString(R.string.done) + "\n" + rs.getString(R.string.spend_time) + ":" + (end - start) + "ms", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
 
 
-
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(ImagePlaygroundActivity.this,e.toString(),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ImagePlaygroundActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
-                            if(ndialog != null)
+                            if (ndialog != null)
                                 ndialog.dismiss();
                         }
                     });
@@ -509,6 +513,12 @@ public class ImagePlaygroundActivity extends AppCompatActivity {
         dialog.setMessage(getResources().getString(R.string.wait));
         dialog.show();
         doThread.start();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
     }
 }

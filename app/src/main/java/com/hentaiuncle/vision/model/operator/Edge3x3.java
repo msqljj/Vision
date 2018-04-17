@@ -12,7 +12,7 @@ public class Edge3x3 extends Convolve3x3 {
 
     public Edge3x3(){
         super();
-        kerlen = Operator.Edge_5X5;
+        kerlen = Operator.Edge_3X3;
     }
 
 

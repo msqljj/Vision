@@ -31,10 +31,7 @@ public class Convolve3x3 extends ImageOperator {
 
         if(kerlen == null);
         RenderScript script = RenderScript.create(context);
-        Bitmap bm = Bitmap.createBitmap(img.getWidth(),img.getHeight(),Bitmap.Config.RGB_565);
-        bm = bm.copy(Bitmap.Config.ARGB_8888,true);
-
-        bm.setPixels(img.getRGB(),0,img.getWidth(),0,0,img.getWidth(),img.getHeight());
+        Bitmap bm = Bitmap.createBitmap(img.getRGB(),img.getWidth(),img.getHeight(),Bitmap.Config.ARGB_8888);
 
         ScriptIntrinsicConvolve3x3 st = ScriptIntrinsicConvolve3x3.create(script,Element.U8_4(script));
         float[] v = new float[3*3];
@@ -52,7 +49,7 @@ public class Convolve3x3 extends ImageOperator {
             output.copyTo(bm);
         }
 
-        bm = bm.copy(Bitmap.Config.RGB_565,false);
+        bm = bm.copy(Bitmap.Config.RGB_565,true);
         bm.getPixels(img.getRGB(),0,img.getWidth(),0,0,img.getWidth(),img.getHeight());
         st.destroy();
 
