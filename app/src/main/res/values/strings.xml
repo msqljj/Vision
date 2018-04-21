@@ -27,13 +27,15 @@
     <string name="tips_cancle">已取消操作</string>
     <string name="tips_exception">发生错误</string>
 
-
-
-
+    <string name="cnn_loading">正在加载神经网络模型</string>
+    <string name="cnn_wait">请稍等</string>
+    <string name="cnn_finish">加载完成</string>
 
     <string name="title_activity_image_playground">图像实验室</string>
+    <string name="title_activity_cnntest">卷积神经网络测试</string>
 
     <string name="action_settings">Settings</string>
-    <string name="large_text">
-    </string>
+
+    <string name="title_activity_net_playground">人工神经网络实验室</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>
